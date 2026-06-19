@@ -25,7 +25,7 @@ def inverse_prediction_minimize(model, y_target, X_train, device='cpu', n_trials
 
 
 
-def inverse_prediction_optuna(model, y_target, X_train, device='cpu', n_trials=200):
+def inverse_prediction_optuna(model, y_target, X_train, device='cpu', n_trials=200, SEED=42):
     x_min      = X_train.min(axis=0)
     x_max      = X_train.max(axis=0)
     n_features = X_train.shape[1]
