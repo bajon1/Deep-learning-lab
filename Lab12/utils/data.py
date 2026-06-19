@@ -2,13 +2,13 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 
-def make_loaders(X, y):
-    X_trainval, X_test, y_trainval, y_test = train_test_split(X, y, test_size=0.2, stratify=y,)
-    X_train, X_val, y_train, y_val = train_test_split(X_trainval, y_trainval, test_size=0.2, stratify=y_trainval,)
+def make_loaders(X, y, batch_size, test_size = 0.2):
+    X_trainval, X_test, y_trainval, y_test = train_test_split(X, y, test_size=test_size)
+    X_train, X_val, y_train, y_val = train_test_split(X_trainval, y_trainval, test_size=test_size)
 
-    train_loader = _make_loader(X_train, y_train, shuffle=True)
-    val_loader = _make_loader(X_val, y_val, shuffle=False)
-    test_loader = _make_loader(X_test, y_test, shuffle=False)
+    train_loader = _make_loader(X_train, y_train, batch_size, shuffle=True)
+    val_loader = _make_loader(X_val, y_val, batch_size, shuffle=False)
+    test_loader = _make_loader(X_test, y_test, batch_size, shuffle=False)
 
     return train_loader, val_loader, test_loader, X_train, y_train
 
