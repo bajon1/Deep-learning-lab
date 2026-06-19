@@ -4,11 +4,10 @@ import torch.optim as optim
 import copy
 
 
-def train_baseline(model, train_loader, val_loader, device, weight_decay, epochs=100, lr=1e-3):
-    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    criterion = nn.MSELoss()
+def train_baseline(model, train_loader, val_loader, criterion, device, weight_decay, epochs=100, lr=1e-3):
+    optimizer     = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     best_val_loss = float("inf")
-    best_weights = None
+    best_weights  = None
 
     for epoch in range(epochs):
         model.train()
@@ -38,7 +37,6 @@ def train_baseline(model, train_loader, val_loader, device, weight_decay, epochs
             print(f"Epoch {epoch+1}/{epochs}  train={train_loss:.4f}  val={val_loss:.4f}")
 
     model.load_state_dict(best_weights)
-
     return model
 
 
