@@ -21,7 +21,7 @@ class BaseRegressionNet(nn.Module):
         return self.network(x)
 
 class MTLAutoencoderRegressor(nn.Module):
-    def __init__(self, in_features = 8):
+    def __init__(self, in_features = 8, latent_dim = 4):
         super().__init__()
 
         self.encoder = nn.Sequential(
@@ -31,13 +31,13 @@ class MTLAutoencoderRegressor(nn.Module):
         )
 
         self.decoder = nn.Sequential(
-            *_block(in_features, 32),
+            *_block(latent_dim, 32),
             *_block(32, 64),
             nn.Linear(64, 8)
         )
 
         self.regressor = nn.Sequential(
-            nn.Linear(in_features, 16),
+            nn.Linear(latent_dim, 16),
             nn.ReLU(),
             nn.Dropout(p=0.1),
             nn.Linear(16, 1)
