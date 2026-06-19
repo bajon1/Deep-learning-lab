@@ -4,3 +4,4 @@ from .models import BaseRegressionNet, MTLAutoencoderRegressor, BinaryClassifier
 from .train import train_baseline, train_mtl
 from .eval import compute_clf_metrics, get_probs
 from .losses import BinaryFocalLoss, LabelSmoothingBinaryCrossEntropy, TverskyLoss
+from .optuna import inverse_prediction_minimize, inverse_prediction_optuna
