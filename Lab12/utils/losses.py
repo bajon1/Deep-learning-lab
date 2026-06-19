@@ -33,3 +33,27 @@ class LabelSmoothingBinaryCrossEntropy(nn.Module):
         smoothed_targets = targets * (1.0 - self.eps) + (1.0 - targets) * self.eps
         return F.binary_cross_entropy_with_logits(logits, smoothed_targets,
                                                    reduction=self.reduction)
+
+
+
+class TverskyLoss(nn.Module):
+    def __init__(self, alpha=0.5, beta=0.5, smooth=1e-6, from_logits=True):
+        super().__init__()
+        self.alpha = alpha
+        self.beta  = beta
+        self.smooth = smooth
+        self.from_logits = from_logits
+
+    def forward(self, logits, targets):
+        if self.from_logits:
+            probs = torch.sigmoid(logits.squeeze(1) if logits.dim() == 2 else logits)
+        else:
+            probs = logits.squeeze(1)
+        targets = targets.float()
+        tp = (probs * targets).sum()
+        fp = (probs * (1.0 - targets)).sum()
+        fn = ((1.0 - probs) * targets).sum()
+        tversky_index = (tp + self.smooth) / (
+            tp + self.alpha * fp + self.beta * fn + self.smooth
+        )
+        return 1.0 - tversky_index
