@@ -1,12 +1,16 @@
 import torch
 import random
 import numpy as np
+from sklearn.datasets import make_classification
+
 
 def set_seed(seed=42):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
+
+
 
 def generate_correlated_regression_data(n_samples=3000, random_state=42):
     rng = np.random.default_rng(random_state)
@@ -40,4 +44,22 @@ def generate_correlated_regression_data(n_samples=3000, random_state=42):
 
     y = (3.5 * U[:, 0] + 0.8 * (U[:, 1] ** 2) + 1.2 * np.sin(U[:, 2]) + rng.normal(0, 0.7, size=n_samples))
 
+    return X.astype(np.float32), y.astype(np.float32)
+
+
+
+def make_imbalanced_dataset(n_samples=12000, n_features=20, imbalance_ratio=0.95, seed=42):
+    X, y = make_classification(
+        n_samples=n_samples,
+        n_features=n_features,
+        n_informative=8,
+        n_redundant=6,
+        n_repeated=0,
+        n_classes=2,
+        n_clusters_per_class=2,
+        weights=[imbalance_ratio, 1 - imbalance_ratio],
+        class_sep=0.9,
+        flip_y=0.02,
+        random_state=seed,
+    )
     return X.astype(np.float32), y.astype(np.float32)

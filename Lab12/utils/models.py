@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+import torch.nn.functional as F
+
 
 def _block(in_f: int, out_f: int, dropout: float = 0.1) -> list:
     return [
@@ -7,6 +10,8 @@ def _block(in_f: int, out_f: int, dropout: float = 0.1) -> list:
         nn.ReLU(),
         nn.Dropout(p=dropout),
     ]
+
+
 
 class BaseRegressionNet(nn.Module):
     def __init__(self, in_features = 8):
@@ -19,6 +24,8 @@ class BaseRegressionNet(nn.Module):
 
     def forward(self, x):
         return self.network(x)
+
+
 
 class MTLAutoencoderRegressor(nn.Module):
     def __init__(self, in_features = 8, latent_dim = 4):
@@ -50,3 +57,22 @@ class MTLAutoencoderRegressor(nn.Module):
         y_hat = self.regressor(z)
 
         return x_hat, y_hat
+
+
+
+class BinaryFocalLoss(nn.Module):
+    def __init__(self, alpha=0.75, gamma=2.0, reduction="mean"):
+        super().__init__()
+        self.alpha     = alpha
+        self.gamma     = gamma
+        self.reduction = reduction
+
+    def forward(self, logits, targets):
+        bce     = F.binary_cross_entropy_with_logits(logits, targets, reduction="none")
+        probs   = torch.sigmoid(logits)
+        pt      = torch.where(targets == 1, probs, 1 - probs)
+        alpha_t = torch.where(targets == 1, self.alpha, 1 - self.alpha)
+        loss    = alpha_t * (1 - pt).pow(self.gamma) * bce
+        if self.reduction == "mean": return loss.mean()
+        elif self.reduction == "sum": return loss.sum()
+        return loss
