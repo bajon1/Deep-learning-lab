@@ -60,6 +60,20 @@ class MTLAutoencoderRegressor(nn.Module):
 
 
 
+class BinaryClassifierMLP(nn.Module):
+    def __init__(self, in_features=20):
+        super().__init__()
+        self.network = nn.Sequential(
+            *_block(in_features, 128),
+            *_block(128, 64),
+            nn.Linear(64, 1)
+        )
+
+    def forward(self, x):
+        return self.network(x).squeeze(1)
+
+
+
 class BinaryFocalLoss(nn.Module):
     def __init__(self, alpha=0.75, gamma=2.0, reduction="mean"):
         super().__init__()
