@@ -10,7 +10,7 @@ def make_loaders(X, y, batch_size, test_size=0.2, squeeze_y=False):
     val_loader   = _make_loader(X_val,   y_val,   batch_size, shuffle=False, squeeze_y=squeeze_y)
     test_loader  = _make_loader(X_test,  y_test,  batch_size, shuffle=False, squeeze_y=squeeze_y)
 
-    return train_loader, val_loader, test_loader, X_train, y_train
+    return train_loader, val_loader, test_loader
 
 
 def _make_loader(X, y, batch_size, shuffle=False, squeeze_y=False):
