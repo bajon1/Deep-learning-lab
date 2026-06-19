@@ -40,4 +40,4 @@ def generate_correlated_regression_data(n_samples=3000, random_state=42):
 
     y = (3.5 * U[:, 0] + 0.8 * (U[:, 1] ** 2) + 1.2 * np.sin(U[:, 2]) + rng.normal(0, 0.7, size=n_samples))
 
-    return X, y
+    return X.astype(np.float32), y.astype(np.float32)
