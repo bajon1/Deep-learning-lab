@@ -1,3 +1,7 @@
+# Lab 11: Pytorch Lightning
+
+---
+
 ## Task 1: Regression network training and testing with PyTorch Lightning
 
 #### Goal: Implement a regression MLP using PyTorch Lightning on a toy dataset.
