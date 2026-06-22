@@ -39,10 +39,10 @@ class MyDataModule(pl.LightningDataModule):
         self.test_loader = MyDataset(X_test, y_test)
 
     def train_dataloader(self):
-        return DataLoader(self.train_loader, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.train_loader, batch_size=self.batch_size, shuffle=True, num_workers=9, persistent_workers=True)
 
     def val_dataloader(self):
-        return DataLoader(self.val_loader, batch_size=self.batch_size)
+        return DataLoader(self.val_loader, batch_size=self.batch_size, num_workers=9, persistent_workers=True)
 
     def test_dataloader(self):
-        return DataLoader(self.test_loader, batch_size=self.batch_size)
+        return DataLoader(self.test_loader, batch_size=self.batch_size, num_workers=9, persistent_workers=True)
