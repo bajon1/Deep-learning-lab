@@ -8,7 +8,11 @@ class TemperatureScaler(nn.Module):
         super().__init__()
         self.model = model
         self.model.eval()
-        self.temperature = nn.Parameter(torch.ones(1))
+        self.log_temperature = nn.Parameter(torch.ones(1))
+
+    @property
+    def temperature(self):
+        return self.log_temperature.exp()
 
     def forward(self, x):
         with torch.no_grad():
@@ -22,7 +26,7 @@ def fit_temperature(model, X, y):
     y = y.to(device)
 
     scaler = TemperatureScaler(model).to(device)
-    optimizer = optim.LBFGS([scaler.temperature], lr=0.01, max_iter=500)
+    optimizer = optim.LBFGS([scaler.log_temperature], lr=0.01, max_iter=500)
     criterion = nn.CrossEntropyLoss()
 
     def closure():
