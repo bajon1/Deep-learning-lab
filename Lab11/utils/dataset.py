@@ -20,7 +20,6 @@ class MyDataset(data.Dataset):
         return X, y
 
 
-
 class MyDataModule(pl.LightningDataModule):
     def __init__(self, batch_size, n_samples, n_features):
         super().__init__()
