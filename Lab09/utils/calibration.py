@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import numpy as np
+from .train import get_all_probs
 
 
 class TemperatureScaler(nn.Module):
@@ -40,3 +42,19 @@ def fit_temperature(model, X, y):
 
     print(f"  Fitted T = {scaler.temperature.item():.4f}")
     return scaler
+
+
+def entropy(probs):
+    eps = 1e-12
+    return -np.sum(probs * np.log(probs + eps), axis=1)
+
+
+def uncertainty_decomposition(models, X, device):
+    all_probs = get_all_probs(models, X, device)
+    mean_probs = all_probs.mean(axis=0)
+
+    total = entropy(mean_probs)
+    aleatoric = np.mean([entropy(all_probs[k]) for k in range(len(models))], axis=0)
+    epistemic = total - aleatoric
+
+    return total, epistemic, aleatoric
