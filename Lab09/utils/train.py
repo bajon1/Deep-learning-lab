@@ -89,10 +89,11 @@ def get_probs(model, X, device):
     model.eval()
     with torch.no_grad():
         logits = model(X.to(device))
-    return F.softmax(logits, dim=1)[:, 1].cpu().numpy()
+    return F.softmax(logits, dim=1).cpu().numpy()
 
-def get_probs_ensemble(models, X, device):
+
+def get_all_probs(models, X, device):
     all_probs = []
     for model in models:
         all_probs.append(get_probs(model, X, device))
-    return np.mean(np.array(all_probs), axis=0)
+    return np.stack(np.array(all_probs), axis=0)
