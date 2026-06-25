@@ -9,8 +9,10 @@ from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.metrics import accuracy_score
 
 
-class MyWrapper(BaseEstimator, ClassifierMixin):
-    def __init__(self, model, classes, batch_size, lr=1e-3,
+class MyWrapper(ClassifierMixin, BaseEstimator):
+    _estimator_type = "classifier"
+
+    def __init__(self, model, classes, batch_size=256, lr=1e-3,
                  epochs=10, device='cpu', is_fitted=False):
         self.model = model
         self.classes = classes
@@ -27,6 +29,7 @@ class MyWrapper(BaseEstimator, ClassifierMixin):
         self.model_  = copy.deepcopy(self.model).to(self.device)
 
         if self.is_fitted:
+            self.classes_ = np.asarray(self.classes)
             self.is_fitted_ = True
             return self
 
@@ -62,7 +65,7 @@ class MyWrapper(BaseEstimator, ClassifierMixin):
     def predict(self, X):
         check_is_fitted(self, 'is_fitted_')
         probs = self.predict_proba(X)
-        return self.classes[np.argmax(probs, axis=1)]
+        return self.classes_[np.argmax(probs, axis=1)]
 
     def score(self, X, y, sample_weight=None):
         return accuracy_score(y, self.predict(X), sample_weight=sample_weight)
