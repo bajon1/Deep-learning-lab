@@ -4,10 +4,12 @@ import torch
 from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import StratifiedKFold
 from .model import *
+import torch.nn.functional as F
 
 
 def fold_train(X_trainval, y_trainval, model, n_splits=5, lr=1e-3, EPOCHS=10, device='cpu'):
     fold_models = []
+    checkpoint = {}
     kfold = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
     criterion = nn.CrossEntropyLoss()
 
@@ -74,3 +76,17 @@ def fold_train(X_trainval, y_trainval, model, n_splits=5, lr=1e-3, EPOCHS=10, de
         print(f"Fold {fold+1}/{n_splits} — best val loss: {best_val_loss:.4f}")
 
     return fold_models
+
+
+def load_model(checkpoint, base_model, device):
+    model = copy.deepcopy(base_model).to(device)
+    model.load_state_dict(checkpoint['model_state'])
+    model.eval()
+    return model
+
+
+def get_probs(model, X, device):
+    model.eval()
+    with torch.no_grad():
+        logits = model(X.to(device))
+    return F.softmax(logits, dim=1)[:, 1].cpu().numpy()
